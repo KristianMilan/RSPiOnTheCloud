@@ -40,9 +40,8 @@ public class CommHandler implements Runnable{
 	}
 		
 	public void run(){
-		System.out.println("conn accepted");
-		
-		
+		System.out.println("connection accepted");
+
 		String line;
 		try {
 			while ((line = br.readLine()) != null)

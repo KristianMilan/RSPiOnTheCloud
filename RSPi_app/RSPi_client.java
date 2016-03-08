@@ -12,14 +12,17 @@ public class RSPi_client {
 	static Socket socket;
 	static BufferedReader br;
 	static PrintWriter pw;
+	static HardwareCtrl HwCtrl;
+	static String RSPiId;
 	
 	private static void newConnectionInit() throws UnknownHostException, IOException{
-			socket = new Socket("127.0.0.1",200);
+			socket = new Socket("104.155.92.166",200);
 			br=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw=new PrintWriter( 
 				new BufferedWriter( new OutputStreamWriter(
 						socket.getOutputStream())), true);
-			pw.println("RSPi-100");
+			RSPiId="RSPi"+GetNetworkAddress.GetAddress("mac");
+			pw.println(RSPiId);
 	}
 	
 	private static void messageHandler(String message){
@@ -38,16 +41,24 @@ public class RSPi_client {
 	} 
 	
 	private static void doTask(String action, String data){
-		if(action=="switchON"){
+		if(action.equals("switchON")){
 			//switch on the particular port
-			// confirmation message format "RSPiId&action=update&data=1&status=switchedON?"
-			sendMessage("action=update&data=1&status=switchedON");
+			int pinNo=Integer.parseInt(data);
+			HwCtrl.setPinState(pinNo, true);
+			// confirmation message format "RSPiId&action=update&data=1&status=true"
+			sendMessage("action=update&data="+pinNo+"&status="+HwCtrl.getPinStateInfo(pinNo));
 		}
 		else if(action.equals("switchOFF")){
 			//switch off the particular port
+			int pinNo=Integer.parseInt(data);
+			HwCtrl.setPinState(pinNo, false);
+			sendMessage("action=update&data="+pinNo+"&status="+HwCtrl.getPinStateInfo(pinNo));
 		}
 		else if(action.equals("giveUpdate")){
 			// send info about all pins
+			sendMessage("action=update&data=0&status="+HwCtrl.getPinStateInfo(0));
+			sendMessage("action=update&data=1&status="+HwCtrl.getPinStateInfo(1));
+			sendMessage("action=update&data=2&status="+HwCtrl.getPinStateInfo(2));
 		}
 		else if(action.equals("connection-confirmed")){
 			System.out.println("Raspberry Pi is connected to the Cloud");
@@ -55,10 +66,20 @@ public class RSPi_client {
 	}
 	
 	private static void sendMessage(String message){
-		pw.println("RSPiId&"+message);
+		pw.println(RSPiId+"&"+message);
 	}
 	
 	public static void main( String argv[] ){
+		
+		// get unique id based on mac address
+		if(argv.length != 0){
+			if(argv[0].equals("-id")){
+				System.out.println("This device Id:"+GetNetworkAddress.GetAddress("mac"));
+				System.exit(0);
+			}
+		}
+
+		HwCtrl= new HardwareCtrl();
 		
 		while(true){
 			
@@ -72,13 +93,13 @@ public class RSPi_client {
 				e.printStackTrace();
 			}
 		
-			String line;
+			
 			try {
+				String line;
 				while(( line = br.readLine()) != null){
 					messageHandler(line);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("Connection Error");
