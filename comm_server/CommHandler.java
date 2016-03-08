@@ -12,13 +12,15 @@ public class CommHandler implements Runnable{
 	
 	Socket Sock;
 	HashMap<String, CommKeeper> threads;
+	HashMap<String, RSPi> raspberries;
 	BufferedReader br;
 	PrintWriter pw;
 	
 	//HashMap could be static
-	public CommHandler(Socket s, HashMap<String, CommKeeper> threads){
+	public CommHandler(Socket s, HashMap<String, CommKeeper> threads, HashMap<String, RSPi> raspberries){
 		this.Sock=s;
 		this.threads=threads;
+		this.raspberries=raspberries;
 		
 		try {
 			br = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -51,14 +53,13 @@ public class CommHandler implements Runnable{
 				
 				//this will be changed to regex that identifies our raspberries
 				if(source.contains("RSPi")){
+					//check with the database if the source exists
 					System.out.println("new incomming connection from a RaspberyPi:"+ source);
-					threads.put(source, new CommKeeper(source, Sock, br, pw));
+					raspberries.put(source, new RSPi());
+					threads.put(source, new CommKeeper(source, raspberries.get(source),
+							Sock, br, pw));
 					new Thread(threads.get(source)).start();
 					break;
-					//check with the database if the source exists
-					//check if the thread for communication with this one is running
-					// if yes update the fields of the class that handles connection with this Raspberry
-					// if not create instance of the class that handles connection and save it to hashmap
 				}
 				else if(source.equals("WebServer")){
 					String destination=messageParts[1];
@@ -66,15 +67,11 @@ public class CommHandler implements Runnable{
 					if(threads.containsKey(destination)){
 						threads.get(destination).sendMessage(data);
 						// log to database
-						
 						pw.println("Message sent to "+ destination);
 					}
 					else{
 						pw.println("Device "+ destination + " does not exist");
 					}
-					//read message and pass it
-					//threads.get(line.split(";")[1]).sendMessage(line.split(";")[2]);
-					
 			}	
 }
 		} catch (IOException e) {

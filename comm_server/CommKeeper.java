@@ -12,16 +12,19 @@ public class CommKeeper implements Runnable{
 	BufferedReader br;
 	PrintWriter pw;
 	String threadId;
+	RSPi raspberry;
 	
-	public CommKeeper(String threadId, Socket socket) throws IOException{
+	public CommKeeper(String threadId, RSPi raspberry, Socket socket) throws IOException{
 		setThreadId(threadId);
+		setRaspberry(raspberry);
 		setSocket(socket);
 		setBr(new BufferedReader(new InputStreamReader(socket.getInputStream())));
 		connConformation();
 	}
 	
-	public CommKeeper(String threadId, Socket socket, BufferedReader br) throws IOException{
+	public CommKeeper(String threadId, RSPi raspberry, Socket socket, BufferedReader br) throws IOException{
 		setThreadId(threadId);
+		setRaspberry(raspberry);
 		setSocket(socket);
 		setBr(br);
 		setPw(new PrintWriter( 
@@ -30,8 +33,9 @@ public class CommKeeper implements Runnable{
 		connConformation();
 	}
 	
-	public CommKeeper(String threadId, Socket socket, BufferedReader br, PrintWriter pw) throws IOException{
+	public CommKeeper(String threadId, RSPi raspberry, Socket socket, BufferedReader br, PrintWriter pw) throws IOException{
 		setThreadId(threadId);
+		setRaspberry(raspberry);
 		setSocket(socket);
 		setBr(br);
 		setPw(pw);
@@ -39,7 +43,7 @@ public class CommKeeper implements Runnable{
 	}
 	
 	private void connConformation(){
-		sendMessage("Welcome:"+threadId);
+		sendMessage("action=connection-confirmed?data=0");
 	}
 	//return true if the message is successfully sent and received
 	public void sendMessage(String message){
@@ -53,6 +57,14 @@ public class CommKeeper implements Runnable{
 	
 	public String getThreadId(){
 		return threadId;
+	}
+	
+	public void setRaspberry(RSPi raspberry){
+		this.raspberry=raspberry;
+	}
+	
+	public RSPi getRaspberry(){
+		return raspberry;
 	}
 	
 	public void setSocket(Socket socket) throws IOException {

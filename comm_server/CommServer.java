@@ -7,12 +7,13 @@ public class CommServer {
 		
 		//not sure about synchronized and it should be static
 		HashMap<String, CommKeeper> threads = new HashMap<String, CommKeeper>();
+		HashMap<String, RSPi> raspberries= new HashMap<String, RSPi>();
 		ServerSocket ss;
 		try {
 			ss = new ServerSocket(200);
 			while(true){
 				//all incoming connection will be served by a new thread
-				new Thread(new CommHandler(ss.accept(), threads)).start();
+				new Thread(new CommHandler(ss.accept(), threads, raspberries)).start();
  
 			}
 		} catch (IOException e) {
