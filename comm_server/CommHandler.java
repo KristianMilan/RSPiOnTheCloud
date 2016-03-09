@@ -54,7 +54,7 @@ public class CommHandler implements Runnable{
 				if(source.contains("RSPi")){
 					//check with the database if the source exists send error message if the RSpi is not registered
 					System.out.println("new incomming connection from "+ source);
-					raspberries.put(source, new RSPi());
+					raspberries.put(source, new RSPi(source, 0));
 					threads.put(source, new CommKeeper(source, raspberries.get(source),
 							Sock, br, pw));
 					new Thread(threads.get(source)).start();

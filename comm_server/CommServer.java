@@ -5,6 +5,7 @@ import java.util.HashMap;
 /*
  * To be done:
  *    - handle exceptions if the client is disconnected 
+ *    - fix the problem when the client is disconnected and the socket is not closed
  */
 public class CommServer {
 	public static void main( String argv[] ){
