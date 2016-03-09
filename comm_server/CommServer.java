@@ -2,6 +2,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
 
+/*
+ * To be done:
+ *    - handle exceptions if the client is disconnected 
+ */
 public class CommServer {
 	public static void main( String argv[] ){
 		

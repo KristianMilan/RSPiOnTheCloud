@@ -40,7 +40,7 @@ public class CommHandler implements Runnable{
 	}
 		
 	public void run(){
-		System.out.println("connection accepted");
+		System.out.println("new connection");
 
 		String line;
 		try {
@@ -52,8 +52,8 @@ public class CommHandler implements Runnable{
 				
 				//this will be changed to regex that identifies our raspberries
 				if(source.contains("RSPi")){
-					//check with the database if the source exists
-					System.out.println("new incomming connection from a RaspberyPi:"+ source);
+					//check with the database if the source exists send error message if the RSpi is not registered
+					System.out.println("new incomming connection from "+ source);
 					raspberries.put(source, new RSPi());
 					threads.put(source, new CommKeeper(source, raspberries.get(source),
 							Sock, br, pw));
@@ -71,7 +71,12 @@ public class CommHandler implements Runnable{
 					else{
 						pw.println("Device "+ destination + " does not exist");
 					}
-			}	
+				}
+				else {
+					// client not known
+					Sock.close();
+					System.out.println("Connection refused, client not known");
+				}
 }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

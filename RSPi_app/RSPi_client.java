@@ -7,6 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/* To be done:
+ *    - handle exception whed the cloud refuses the connection (socket closed)
+ *    - print error message if the RSPi is not registered
+ */
+
 public class RSPi_client {
 	
 	static Socket socket;
@@ -16,7 +21,7 @@ public class RSPi_client {
 	static String RSPiId;
 	
 	private static void newConnectionInit() throws UnknownHostException, IOException{
-			socket = new Socket("104.155.92.166",200);
+			socket = new Socket("192.168.1.15",200);
 			br=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw=new PrintWriter( 
 				new BufferedWriter( new OutputStreamWriter(
@@ -46,19 +51,21 @@ public class RSPi_client {
 			int pinNo=Integer.parseInt(data);
 			HwCtrl.setPinState(pinNo, true);
 			// confirmation message format "RSPiId&action=update&data=1&status=true"
-			sendMessage("action=update&data="+pinNo+"&status="+HwCtrl.getPinStateInfo(pinNo));
+			sendMessage("action=update&data="+pinNo+"&state="+HwCtrl.getPinStateInfo(pinNo));
 		}
 		else if(action.equals("switchOFF")){
 			//switch off the particular port
 			int pinNo=Integer.parseInt(data);
 			HwCtrl.setPinState(pinNo, false);
-			sendMessage("action=update&data="+pinNo+"&status="+HwCtrl.getPinStateInfo(pinNo));
+			sendMessage("action=update&data="+pinNo+"&state="+HwCtrl.getPinStateInfo(pinNo));
 		}
 		else if(action.equals("giveUpdate")){
 			// send info about all pins
-			sendMessage("action=update&data=0&status="+HwCtrl.getPinStateInfo(0));
-			sendMessage("action=update&data=1&status="+HwCtrl.getPinStateInfo(1));
-			sendMessage("action=update&data=2&status="+HwCtrl.getPinStateInfo(2));
+			if(data.equals("all")){
+				sendMessage("action=update&data=0&state="+HwCtrl.getPinStateInfo(0));
+				sendMessage("action=update&data=1&state="+HwCtrl.getPinStateInfo(1));
+				sendMessage("action=update&data=2&state="+HwCtrl.getPinStateInfo(2));
+			}
 		}
 		else if(action.equals("connection-confirmed")){
 			System.out.println("Raspberry Pi is connected to the Cloud");
