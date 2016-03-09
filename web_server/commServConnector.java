@@ -17,15 +17,14 @@ public class commServConnector {
 	PrintWriter pw;
 	
 	public commServConnector(){
-		this.id="webServer";
+		this.id="WebServer";
 		
 		try {
 			socket = new Socket("127.0.0.1",200);
-			PrintWriter pw=new PrintWriter( 
+			pw=new PrintWriter( 
 					new BufferedWriter( new OutputStreamWriter(
 							socket.getOutputStream())), true);
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,7 +32,7 @@ public class commServConnector {
 	}
 	
 	// returns true if the command is received properly by
-	// the communication server
+	// the communication server and resent to the Raspberry
 	public boolean setPin(String RSPi_id, int pinNo, boolean state){
 		if(state==true)
 			pw.println(id+"&"+RSPi_id+"&action=switchON?data="+pinNo);
@@ -41,7 +40,9 @@ public class commServConnector {
 			pw.println(id+"&"+RSPi_id+"&action=switchOFF?data="+pinNo);
 		
 		try {
-			if((br.readLine()).equals("Message sent to "+ RSPi_id)){
+			String line;
+			line=br.readLine();
+			if(line.equals("Message sent to "+ RSPi_id)){
 				return true;
 			}
 			else return false;
