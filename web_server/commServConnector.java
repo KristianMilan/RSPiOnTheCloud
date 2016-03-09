@@ -15,22 +15,28 @@ public class commServConnector {
 	Socket socket;
 	BufferedReader br;
 	PrintWriter pw;
+	boolean connectionOpened;
 	
 	public commServConnector(){
 		this.id="WebServer";
-		
+		connectionOpened=openConnection();
+	}
+	
+	// returns true if the communication with server is ok
+	private boolean openConnection(){
 		try {
 			socket = new Socket("127.0.0.1",200);
 			pw=new PrintWriter( 
 					new BufferedWriter( new OutputStreamWriter(
 							socket.getOutputStream())), true);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			return true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
-	
 	// returns true if the command is received properly by
 	// the communication server and resent to the Raspberry
 	public boolean setPin(String RSPi_id, int pinNo, boolean state){
