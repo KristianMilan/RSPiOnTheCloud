@@ -25,7 +25,7 @@ public class commServConnector {
 	// returns true if the communication with server is ok
 	private boolean openConnection(){
 		try {
-			socket = new Socket("127.0.0.1",200);
+			socket = new Socket("104.155.45.14",200);
 			pw=new PrintWriter( 
 					new BufferedWriter( new OutputStreamWriter(
 							socket.getOutputStream())), true);
@@ -56,5 +56,9 @@ public class commServConnector {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean connectionOpened(){
+		return connectionOpened;
 	}
 }
