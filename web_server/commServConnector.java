@@ -1,3 +1,10 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.raspberrypiapp.utility;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,7 +33,7 @@ public class commServConnector {
 	private boolean openConnection(){
 		try {
 			socket = new Socket("104.155.45.14",200);
-			pw=new PrintWriter( 
+pw=new PrintWriter( 
 					new BufferedWriter( new OutputStreamWriter(
 							socket.getOutputStream())), true);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -48,7 +55,7 @@ public class commServConnector {
 		try {
 			String line;
 			line=br.readLine();
-			if(line.equals("Message sent to "+ RSPi_id)){
+                        if(line.equals("Message sent to "+ RSPi_id)){
 				return true;
 			}
 			else return false;
