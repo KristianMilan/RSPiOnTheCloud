@@ -1,4 +1,4 @@
-Raspberry Pi Hardware outputs contrelled over internet using cloud application.
+Raspberry Pi hardware outputs controlled over internet using cloud application.
 
 Video:
 https://youtu.be/vIPrOVivZKo
